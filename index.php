@@ -11,7 +11,7 @@
 		redirect((MULTI_TENANTS ? SaaS::loginUrl() : 'index.php?signIn=1'), MULTI_TENANTS);
 	} elseif(Request::val('signIn') || Request::val('loginFailed')) {
 		if(Request::val('loginFailed')) @header('HTTP/1.0 403 Forbidden');
-		include(__DIR__ . '/login.php');
+		include(__DIR__ . '/appginilte_login.php');
 	} else {
-		include(__DIR__ . '/home.php');
+		include(__DIR__ . '/appginilte_dashboard.php');
 	}

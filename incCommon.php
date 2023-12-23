@@ -259,7 +259,7 @@
 	#########################################################
 
 	function htmlUserBar() {
-		global $Translation;
+    global $Translation;
 		if(!defined('PREPEND_PATH')) define('PREPEND_PATH', '');
 
 		$mi = getMemberInfo();
@@ -268,7 +268,7 @@
 		ob_start();
 
 		?>
-		<nav class="navbar navbar-default navbar-fixed-top hidden-print" role="navigation">
+		<nav class="navbar navbar-default navbar-fixed-top hidden" role="navigation">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 					<span class="sr-only">Toggle navigation</span>
@@ -312,7 +312,7 @@
 						<ul class="nav navbar-nav navbar-right hidden-xs">
 							<!-- logged user profile menu -->
 							<li class="dropdown" title="<?php echo html_attr("{$Translation['signed as']} {$mi['username']}"); ?>">
-								<a href="#" class="dropdown-toggle profile-menu-icon" data-toggle="dropdown"><i class="glyphicon glyphicon-user icon"></i><span class="profile-menu-text"><?php echo $mi['username']; ?></span><b class="caret"></b></a>
+								<a href="#" class="dropdown-toggle profile-menu-icon" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i></a>
 								<ul class="dropdown-menu profile-menu">
 									<li class="user-profile-menu-item" title="<?php echo html_attr("{$Translation['Your info']}"); ?>">
 										<a href="<?php echo PREPEND_PATH; ?>membership_profile.php"><i class="glyphicon glyphicon-user"></i> <span class="username"><?php echo $mi['username']; ?></span></a>
@@ -353,101 +353,76 @@
 		<?php
 
 		return ob_get_clean();
-	}
+}
 
 	#########################################################
 
-	function showNotifications($msg = '', $class = '', $fadeout = true) {
-		global $Translation;
-		if($error_message = strip_tags(Request::val('error_message')))
-			$error_message = '<div class="text-bold">' . $error_message . '</div>';
+	function showNotifications($msg = '', $class = '', $fadeout = true)
+{
+	global $Translation;
 
-		if(!$msg) { // if no msg, use url to detect message to display
-			if(Request::val('record-added-ok')) {
-				$msg = $Translation['new record saved'];
-				$class = 'alert-success';
-			} elseif(Request::val('record-added-error')) {
-				$msg = $Translation['Couldn\'t save the new record'] . $error_message;
-				$class = 'alert-danger';
-				$fadeout = false;
-			} elseif(Request::val('record-updated-ok')) {
-				$msg = $Translation['record updated'];
-				$class = 'alert-success';
-			} elseif(Request::val('record-updated-error')) {
-				$msg = $Translation['Couldn\'t save changes to the record'] . $error_message;
-				$class = 'alert-danger';
-				$fadeout = false;
-			} elseif(Request::val('record-deleted-ok')) {
-				$msg = $Translation['The record has been deleted successfully'];
-				$class = 'alert-success';
-			} elseif(Request::val('record-deleted-error')) {
-				$msg = $Translation['Couldn\'t delete this record'] . $error_message;
-				$class = 'alert-danger';
-				$fadeout = false;
-			} else {
-				return '';
-			}
-		}
-		$id = 'notification-' . rand();
-
-		ob_start();
-		// notification template
-		?>
-		<div id="%%ID%%" class="alert alert-dismissable %%CLASS%%" style="opacity: 1; padding-top: 6px; padding-bottom: 6px; animation: fadeIn 1.5s ease-out; z-index: 100; position: relative;">
-			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-			%%MSG%%
-		</div>
-		<script>
-			$j(function() {
-				var autoDismiss = <?php echo $fadeout ? 'true' : 'false'; ?>,
-					embedded = !$j('nav').length,
-					messageDelay = 10, fadeDelay = 1.5;
-
-				if(!autoDismiss) {
-					if(embedded)
-						$j('#%%ID%%').before('<div style="height: 2rem;"></div>');
-					else
-						$j('#%%ID%%').css({ margin: '0 0 1rem' });
-
-					return;
-				}
-
-				// below code runs only in case of autoDismiss
-
-				if(embedded)
-					$j('#%%ID%%').css({ margin: '1rem 0 -1rem' });
-				else
-					$j('#%%ID%%').css({ margin: '-15px 0 -20px' });
-
-				setTimeout(function() {
-					$j('#%%ID%%').css({    animation: 'fadeOut ' + fadeDelay + 's ease-out' });
-				}, messageDelay * 1000);
-
-				setTimeout(function() {
-					$j('#%%ID%%').css({    visibility: 'hidden' });
-				}, (messageDelay + fadeDelay) * 1000);
-			})
-		</script>
-		<style>
-			@keyframes fadeIn {
-				0%   { opacity: 0; }
-				100% { opacity: 1; }
-			}
-			@keyframes fadeOut {
-				0%   { opacity: 1; }
-				100% { opacity: 0; }
-			}
-		</style>
-
-		<?php
-		$out = ob_get_clean();
-
-		$out = str_replace('%%ID%%', $id, $out);
-		$out = str_replace('%%MSG%%', $msg, $out);
-		$out = str_replace('%%CLASS%%', $class, $out);
-
-		return $out;
+	if ($error_message = strip_tags(Request::val('error_message'))) {
+		$error_message = '<div class="text-bold">' . $error_message . '</div>';
 	}
+
+	if (!$msg) { // if no msg, use url to detect message to display
+		$msg = $_SESSION['custom_err_msg'];
+		$footer = $_SESSION['alert_footer'];
+		if ($_REQUEST['record-added-ok'] != '') {
+			$msg = ($msg == '') ? $Translation['new record saved'] : $msg;
+			unset($_SESSION['custom_err_msg']);
+			unset($_SESSION['alert_footer']);
+			$class = 'success';
+		} elseif ($_REQUEST['record-added-error'] != '') {
+			$msg = ($msg == '') ? $Translation['Couldn\'t save the new record'] : $msg;
+			unset($_SESSION['custom_err_msg']);
+			unset($_SESSION['alert_footer']);
+			$class = 'error';
+		} elseif ($_REQUEST['record-updated-ok'] != '') {
+			$msg = ($msg == '') ? $Translation['record updated'] : $msg;
+			unset($_SESSION['custom_err_msg']);
+			unset($_SESSION['alert_footer']);
+			$class = 'success';
+		} elseif ($_REQUEST['record-updated-error'] != '') {
+			$msg = ($msg == '') ? $Translation['Couldn\'t save changes to the record'] : $msg;
+			unset($_SESSION['custom_err_msg']);
+			unset($_SESSION['alert_footer']);
+			$class = 'error';
+		} elseif ($_REQUEST['record-deleted-ok'] != '') {
+			$msg = ($msg == '') ? $Translation['The record has been deleted successfully'] : $msg;
+			unset($_SESSION['custom_err_msg']);
+			unset($_SESSION['alert_footer']);
+			$class = 'success';
+		} elseif ($_REQUEST['record-deleted-error'] != '') {
+			$msg = ($msg == '') ? $Translation['Couldn\'t delete this record'] : $msg;
+			unset($_SESSION['custom_err_msg']);
+			unset($_SESSION['alert_footer']);
+			$class = 'error';
+		} else {
+			return '';
+		}
+	}
+	$id = 'notification-' . rand();
+
+	ob_start();
+	// notification template
+?>
+	<script src="appginilte/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+	<script type="text/javascript">
+		Swal.fire({
+			position: 'top',
+			icon: '<?php echo $class ?>',
+			title: '<?php echo ($class == "success") ? "Yeey!" : "Oops!"; ?>',
+			text: '<?php echo $msg ?>',
+			footer: '<?php echo $footer ??''; ?>',
+			showConfirmButton: true,
+			width: '50%',
+		});
+	</script>
+<?php
+	$out = ob_get_clean();
+	return $out;
+}
 
 	#########################################################
 

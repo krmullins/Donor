@@ -39,7 +39,7 @@
 
 	function get_table_groups($skip_authentication = false) {
 		$tables = getTableList($skip_authentication);
-		$all_groups = ['Supporters', 'Donations'];
+		$all_groups = ['Supporters', 'Donations', 'Backend'];
 
 		$groups = [];
 		foreach($all_groups as $grp) {
@@ -108,9 +108,10 @@
 		$sql_fields = [
 			'Supporters' => "`Supporters`.`ID` as 'ID', `Supporters`.`FirstName` as 'FirstName', `Supporters`.`LastName` as 'LastName', `Supporters`.`SpouseName` as 'SpouseName', `Supporters`.`Business` as 'Business', `Supporters`.`Address1` as 'Address1', `Supporters`.`Address2` as 'Address2', `Supporters`.`City` as 'City', `Supporters`.`State` as 'State', `Supporters`.`Zip` as 'Zip', `Supporters`.`Country` as 'Country', CONCAT_WS('-', LEFT(`Supporters`.`Phone`,3), MID(`Supporters`.`Phone`,4,3), RIGHT(`Supporters`.`Phone`,4)) as 'Phone', CONCAT_WS('-', LEFT(`Supporters`.`Cell`,3), MID(`Supporters`.`Cell`,4,3), RIGHT(`Supporters`.`Cell`,4)) as 'Cell', `Supporters`.`Email` as 'Email', `Supporters`.`Status` as 'Status', `Supporters`.`ContactMethod` as 'ContactMethod', `Supporters`.`Grouping` as 'Grouping', `Supporters`.`TotalDonated` as 'TotalDonated', `Supporters`.`TotalMatched` as 'TotalMatched', `Supporters`.`MailingName` as 'MailingName', `Supporters`.`MailingNameFull` as 'MailingNameFull'",
 			'Campaigns' => "`Campaigns`.`ID` as 'ID', `Campaigns`.`CampaignName` as 'CampaignName', DATE_FORMAT(`Campaigns`.`StartDate`, '%h:%i %p') as 'StartDate', DATE_FORMAT(`Campaigns`.`EndDate`, '%h:%i %p') as 'EndDate', CONCAT('$', FORMAT(`Campaigns`.`Goal`, 2)) as 'Goal', DATE_FORMAT(`Campaigns`.`DateClosed`, '%h:%i %p') as 'DateClosed', `Campaigns`.`Status` as 'Status'",
-			'Donations' => "`Donations`.`ID` as 'ID', if(`Donations`.`DonationDate`,date_format(`Donations`.`DonationDate`,'%m/%d/%Y'),'') as 'DonationDate', CONCAT('$', FORMAT(`Donations`.`Amount`, 2)) as 'Amount', `Donations`.`Description` as 'Description', IF(    CHAR_LENGTH(`Supporters1`.`LastName`) || CHAR_LENGTH(`Supporters1`.`MailingName`), CONCAT_WS('',   `Supporters1`.`LastName`, ', ', `Supporters1`.`MailingName`), '') as 'SupporterID', IF(    CHAR_LENGTH(`Campaigns1`.`CampaignName`), CONCAT_WS('',   `Campaigns1`.`CampaignName`), '') as 'CampaignID', `Donations`.`Paytype` as 'Paytype', `Donations`.`Number` as 'Number', `Donations`.`TransNo` as 'TransNo', `Donations`.`Matching` as 'Matching', `Donations`.`Anonymous` as 'Anonymous', `Donations`.`Acknowledged` as 'Acknowledged', `Donations`.`DonationYear` as 'DonationYear', `Donations`.`Notes` as 'Notes', `Donations`.`MemoryOf` as 'MemoryOf', `Donations`.`HonorOf` as 'HonorOf'",
+			'Donations' => "`Donations`.`ID` as 'ID', if(`Donations`.`DonationDate`,date_format(`Donations`.`DonationDate`,'%m/%d/%Y'),'') as 'DonationDate', CONCAT('$', FORMAT(`Donations`.`Amount`, 2)) as 'Amount', `Donations`.`Description` as 'Description', IF(    CHAR_LENGTH(`Supporters1`.`MailingNameFull`), CONCAT_WS('',   `Supporters1`.`MailingNameFull`), '') as 'SupporterID', IF(    CHAR_LENGTH(`Campaigns1`.`CampaignName`), CONCAT_WS('',   `Campaigns1`.`CampaignName`), '') as 'CampaignID', `Donations`.`Paytype` as 'Paytype', `Donations`.`Number` as 'Number', `Donations`.`TransNo` as 'TransNo', `Donations`.`Matching` as 'Matching', `Donations`.`Anonymous` as 'Anonymous', `Donations`.`Acknowledged` as 'Acknowledged', `Donations`.`DonationYear` as 'DonationYear', `Donations`.`Notes` as 'Notes', `Donations`.`MemoryOf` as 'MemoryOf', `Donations`.`HonorOf` as 'HonorOf'",
 			'Notes' => "`Notes`.`ID` as 'ID', IF(    CHAR_LENGTH(`Supporters1`.`LastName`) || CHAR_LENGTH(`Supporters1`.`MailingName`), CONCAT_WS('',   `Supporters1`.`LastName`, ', ', `Supporters1`.`MailingName`), '') as 'SupporterID', DATE_FORMAT(`Notes`.`Date`, '%c/%e/%Y %l:%i%p') as 'Date', `Notes`.`Note` as 'Note'",
 			'MatchingFunds' => "`MatchingFunds`.`ID` as 'ID', `MatchingFunds`.`OrganizationName` as 'OrganizationName', CONCAT('$', FORMAT(`MatchingFunds`.`Amount`, 2)) as 'Amount', IF(    CHAR_LENGTH(`Supporters1`.`LastName`) || CHAR_LENGTH(`Supporters1`.`MailingName`), CONCAT_WS('',   `Supporters1`.`LastName`, ', ', `Supporters1`.`MailingName`), '') as 'SupporterID', DATE_FORMAT(`MatchingFunds`.`DateSubmitted`, '%h:%i %p') as 'DateSubmitted', DATE_FORMAT(`MatchingFunds`.`DateReceived`, '%h:%i %p') as 'DateReceived', `MatchingFunds`.`Notes` as 'Notes', IF(    CHAR_LENGTH(`Donations1`.`ID`) || CHAR_LENGTH(`Donations1`.`Amount`), CONCAT_WS('',   `Donations1`.`ID`, ' - ', `Donations1`.`Amount`), '') as 'DonationID', `MatchingFunds`.`Attachment` as 'Attachment'",
+			'Settings' => "`Settings`.`ID` as 'ID', `Settings`.`invoiceYear` as 'invoiceYear'",
 		];
 
 		if(isset($sql_fields[$table_name])) return $sql_fields[$table_name];
@@ -127,6 +128,7 @@
 			'Donations' => "`Donations` LEFT JOIN `Supporters` as Supporters1 ON `Supporters1`.`ID`=`Donations`.`SupporterID` LEFT JOIN `Campaigns` as Campaigns1 ON `Campaigns1`.`ID`=`Donations`.`CampaignID` ",
 			'Notes' => "`Notes` LEFT JOIN `Supporters` as Supporters1 ON `Supporters1`.`ID`=`Notes`.`SupporterID` ",
 			'MatchingFunds' => "`MatchingFunds` LEFT JOIN `Supporters` as Supporters1 ON `Supporters1`.`ID`=`MatchingFunds`.`SupporterID` LEFT JOIN `Donations` as Donations1 ON `Donations1`.`ID`=`MatchingFunds`.`DonationID` ",
+			'Settings' => "`Settings` ",
 		];
 
 		$pkey = [
@@ -135,6 +137,7 @@
 			'Donations' => 'ID',
 			'Notes' => 'ID',
 			'MatchingFunds' => 'ID',
+			'Settings' => 'ID',
 		];
 
 		if(!isset($sql_from[$table_name])) return false;
@@ -250,6 +253,10 @@
 				'Notes' => '',
 				'DonationID' => '',
 				'Attachment' => '',
+			],
+			'Settings' => [
+				'ID' => '',
+				'invoiceYear' => '',
 			],
 		];
 
@@ -1047,7 +1054,7 @@ EOT;
 					'forced-where' => '',
 					'display-fields' => [0 => 'ID', 1 => 'Donation Date', 2 => 'Amount', 3 => 'Description', 4 => 'Supporter', 5 => 'Campaign', 6 => 'Payment Type', 7 => 'Number', 8 => 'Trans#', 9 => 'Matching', 10 => 'Anonymous', 11 => 'Acknowledged', 12 => 'Donation Year', 13 => 'Notes'],
 					'display-field-names' => [0 => 'ID', 1 => 'DonationDate', 2 => 'Amount', 3 => 'Description', 4 => 'SupporterID', 5 => 'CampaignID', 6 => 'Paytype', 7 => 'Number', 8 => 'TransNo', 9 => 'Matching', 10 => 'Anonymous', 11 => 'Acknowledged', 12 => 'DonationYear', 13 => 'Notes'],
-					'sortable-fields' => [0 => '`Donations`.`ID`', 1 => '`Donations`.`DonationDate`', 2 => '`Donations`.`Amount`', 3 => 4, 4 => 5, 5 => '`Campaigns1`.`CampaignName`', 6 => 7, 7 => 8, 8 => 9, 9 => '`Donations`.`Matching`', 10 => '`Donations`.`Anonymous`', 11 => '`Donations`.`Acknowledged`', 12 => 13, 13 => 14, 14 => 15, 15 => 16],
+					'sortable-fields' => [0 => '`Donations`.`ID`', 1 => '`Donations`.`DonationDate`', 2 => '`Donations`.`Amount`', 3 => 4, 4 => '`Supporters1`.`MailingNameFull`', 5 => '`Campaigns1`.`CampaignName`', 6 => 7, 7 => 8, 8 => 9, 9 => '`Donations`.`Matching`', 10 => '`Donations`.`Anonymous`', 11 => '`Donations`.`Acknowledged`', 12 => 13, 13 => 14, 14 => 15, 15 => 16],
 					'records-per-page' => 10,
 					'default-sort-by' => false,
 					'default-sort-direction' => 'asc',
@@ -1056,7 +1063,7 @@ EOT;
 					'show-page-progress' => true,
 					'template' => 'children-Donations',
 					'template-printable' => 'children-Donations-printable',
-					'query' => "SELECT `Donations`.`ID` as 'ID', if(`Donations`.`DonationDate`,date_format(`Donations`.`DonationDate`,'%m/%d/%Y'),'') as 'DonationDate', CONCAT('$', FORMAT(`Donations`.`Amount`, 2)) as 'Amount', `Donations`.`Description` as 'Description', IF(    CHAR_LENGTH(`Supporters1`.`LastName`) || CHAR_LENGTH(`Supporters1`.`MailingName`), CONCAT_WS('',   `Supporters1`.`LastName`, ', ', `Supporters1`.`MailingName`), '') as 'SupporterID', IF(    CHAR_LENGTH(`Campaigns1`.`CampaignName`), CONCAT_WS('',   `Campaigns1`.`CampaignName`), '') as 'CampaignID', `Donations`.`Paytype` as 'Paytype', `Donations`.`Number` as 'Number', `Donations`.`TransNo` as 'TransNo', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Matching`, 'check', 'unchecked'), '\"></i>') as 'Matching', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Anonymous`, 'check', 'unchecked'), '\"></i>') as 'Anonymous', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Acknowledged`, 'check', 'unchecked'), '\"></i>') as 'Acknowledged', `Donations`.`DonationYear` as 'DonationYear', `Donations`.`Notes` as 'Notes', `Donations`.`MemoryOf` as 'MemoryOf', `Donations`.`HonorOf` as 'HonorOf' FROM `Donations` LEFT JOIN `Supporters` as Supporters1 ON `Supporters1`.`ID`=`Donations`.`SupporterID` LEFT JOIN `Campaigns` as Campaigns1 ON `Campaigns1`.`ID`=`Donations`.`CampaignID` "
+					'query' => "SELECT `Donations`.`ID` as 'ID', if(`Donations`.`DonationDate`,date_format(`Donations`.`DonationDate`,'%m/%d/%Y'),'') as 'DonationDate', CONCAT('$', FORMAT(`Donations`.`Amount`, 2)) as 'Amount', `Donations`.`Description` as 'Description', IF(    CHAR_LENGTH(`Supporters1`.`MailingNameFull`), CONCAT_WS('',   `Supporters1`.`MailingNameFull`), '') as 'SupporterID', IF(    CHAR_LENGTH(`Campaigns1`.`CampaignName`), CONCAT_WS('',   `Campaigns1`.`CampaignName`), '') as 'CampaignID', `Donations`.`Paytype` as 'Paytype', `Donations`.`Number` as 'Number', `Donations`.`TransNo` as 'TransNo', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Matching`, 'check', 'unchecked'), '\"></i>') as 'Matching', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Anonymous`, 'check', 'unchecked'), '\"></i>') as 'Anonymous', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Acknowledged`, 'check', 'unchecked'), '\"></i>') as 'Acknowledged', `Donations`.`DonationYear` as 'DonationYear', `Donations`.`Notes` as 'Notes', `Donations`.`MemoryOf` as 'MemoryOf', `Donations`.`HonorOf` as 'HonorOf' FROM `Donations` LEFT JOIN `Supporters` as Supporters1 ON `Supporters1`.`ID`=`Donations`.`SupporterID` LEFT JOIN `Campaigns` as Campaigns1 ON `Campaigns1`.`ID`=`Donations`.`CampaignID` "
 				],
 				'CampaignID' => [
 					'parent-table' => 'Campaigns',
@@ -1071,7 +1078,7 @@ EOT;
 					'forced-where' => '',
 					'display-fields' => [0 => 'ID', 1 => 'Donation Date', 2 => 'Amount', 3 => 'Description', 4 => 'Supporter', 5 => 'Campaign', 6 => 'Payment Type', 7 => 'Number', 8 => 'Trans#', 9 => 'Matching', 10 => 'Anonymous', 11 => 'Acknowledged', 12 => 'Donation Year', 13 => 'Notes'],
 					'display-field-names' => [0 => 'ID', 1 => 'DonationDate', 2 => 'Amount', 3 => 'Description', 4 => 'SupporterID', 5 => 'CampaignID', 6 => 'Paytype', 7 => 'Number', 8 => 'TransNo', 9 => 'Matching', 10 => 'Anonymous', 11 => 'Acknowledged', 12 => 'DonationYear', 13 => 'Notes'],
-					'sortable-fields' => [0 => '`Donations`.`ID`', 1 => '`Donations`.`DonationDate`', 2 => '`Donations`.`Amount`', 3 => 4, 4 => 5, 5 => '`Campaigns1`.`CampaignName`', 6 => 7, 7 => 8, 8 => 9, 9 => '`Donations`.`Matching`', 10 => '`Donations`.`Anonymous`', 11 => '`Donations`.`Acknowledged`', 12 => 13, 13 => 14, 14 => 15, 15 => 16],
+					'sortable-fields' => [0 => '`Donations`.`ID`', 1 => '`Donations`.`DonationDate`', 2 => '`Donations`.`Amount`', 3 => 4, 4 => '`Supporters1`.`MailingNameFull`', 5 => '`Campaigns1`.`CampaignName`', 6 => 7, 7 => 8, 8 => 9, 9 => '`Donations`.`Matching`', 10 => '`Donations`.`Anonymous`', 11 => '`Donations`.`Acknowledged`', 12 => 13, 13 => 14, 14 => 15, 15 => 16],
 					'records-per-page' => 10,
 					'default-sort-by' => false,
 					'default-sort-direction' => 'asc',
@@ -1080,7 +1087,7 @@ EOT;
 					'show-page-progress' => true,
 					'template' => 'children-Donations',
 					'template-printable' => 'children-Donations-printable',
-					'query' => "SELECT `Donations`.`ID` as 'ID', if(`Donations`.`DonationDate`,date_format(`Donations`.`DonationDate`,'%m/%d/%Y'),'') as 'DonationDate', CONCAT('$', FORMAT(`Donations`.`Amount`, 2)) as 'Amount', `Donations`.`Description` as 'Description', IF(    CHAR_LENGTH(`Supporters1`.`LastName`) || CHAR_LENGTH(`Supporters1`.`MailingName`), CONCAT_WS('',   `Supporters1`.`LastName`, ', ', `Supporters1`.`MailingName`), '') as 'SupporterID', IF(    CHAR_LENGTH(`Campaigns1`.`CampaignName`), CONCAT_WS('',   `Campaigns1`.`CampaignName`), '') as 'CampaignID', `Donations`.`Paytype` as 'Paytype', `Donations`.`Number` as 'Number', `Donations`.`TransNo` as 'TransNo', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Matching`, 'check', 'unchecked'), '\"></i>') as 'Matching', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Anonymous`, 'check', 'unchecked'), '\"></i>') as 'Anonymous', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Acknowledged`, 'check', 'unchecked'), '\"></i>') as 'Acknowledged', `Donations`.`DonationYear` as 'DonationYear', `Donations`.`Notes` as 'Notes', `Donations`.`MemoryOf` as 'MemoryOf', `Donations`.`HonorOf` as 'HonorOf' FROM `Donations` LEFT JOIN `Supporters` as Supporters1 ON `Supporters1`.`ID`=`Donations`.`SupporterID` LEFT JOIN `Campaigns` as Campaigns1 ON `Campaigns1`.`ID`=`Donations`.`CampaignID` "
+					'query' => "SELECT `Donations`.`ID` as 'ID', if(`Donations`.`DonationDate`,date_format(`Donations`.`DonationDate`,'%m/%d/%Y'),'') as 'DonationDate', CONCAT('$', FORMAT(`Donations`.`Amount`, 2)) as 'Amount', `Donations`.`Description` as 'Description', IF(    CHAR_LENGTH(`Supporters1`.`MailingNameFull`), CONCAT_WS('',   `Supporters1`.`MailingNameFull`), '') as 'SupporterID', IF(    CHAR_LENGTH(`Campaigns1`.`CampaignName`), CONCAT_WS('',   `Campaigns1`.`CampaignName`), '') as 'CampaignID', `Donations`.`Paytype` as 'Paytype', `Donations`.`Number` as 'Number', `Donations`.`TransNo` as 'TransNo', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Matching`, 'check', 'unchecked'), '\"></i>') as 'Matching', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Anonymous`, 'check', 'unchecked'), '\"></i>') as 'Anonymous', concat('<i class=\"glyphicon glyphicon-', if(`Donations`.`Acknowledged`, 'check', 'unchecked'), '\"></i>') as 'Acknowledged', `Donations`.`DonationYear` as 'DonationYear', `Donations`.`Notes` as 'Notes', `Donations`.`MemoryOf` as 'MemoryOf', `Donations`.`HonorOf` as 'HonorOf' FROM `Donations` LEFT JOIN `Supporters` as Supporters1 ON `Supporters1`.`ID`=`Donations`.`SupporterID` LEFT JOIN `Campaigns` as Campaigns1 ON `Campaigns1`.`ID`=`Donations`.`CampaignID` "
 				],
 			],
 			'Notes' => [
@@ -1158,6 +1165,8 @@ EOT;
 					'template-printable' => 'children-MatchingFunds-printable',
 					'query' => "SELECT `MatchingFunds`.`ID` as 'ID', `MatchingFunds`.`OrganizationName` as 'OrganizationName', CONCAT('$', FORMAT(`MatchingFunds`.`Amount`, 2)) as 'Amount', IF(    CHAR_LENGTH(`Supporters1`.`LastName`) || CHAR_LENGTH(`Supporters1`.`MailingName`), CONCAT_WS('',   `Supporters1`.`LastName`, ', ', `Supporters1`.`MailingName`), '') as 'SupporterID', DATE_FORMAT(`MatchingFunds`.`DateSubmitted`, '%h:%i %p') as 'DateSubmitted', DATE_FORMAT(`MatchingFunds`.`DateReceived`, '%h:%i %p') as 'DateReceived', `MatchingFunds`.`Notes` as 'Notes', IF(    CHAR_LENGTH(`Donations1`.`ID`) || CHAR_LENGTH(`Donations1`.`Amount`), CONCAT_WS('',   `Donations1`.`ID`, ' - ', `Donations1`.`Amount`), '') as 'DonationID', `MatchingFunds`.`Attachment` as 'Attachment' FROM `MatchingFunds` LEFT JOIN `Supporters` as Supporters1 ON `Supporters1`.`ID`=`MatchingFunds`.`SupporterID` LEFT JOIN `Donations` as Donations1 ON `Donations1`.`ID`=`MatchingFunds`.`DonationID` "
 				],
+			],
+			'Settings' => [
 			],
 		];
 

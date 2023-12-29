@@ -40,7 +40,7 @@
 			'SupporterID' => [
 				'parent_table' => 'Supporters',
 				'parent_pk_field' => 'ID',
-				'parent_caption' => 'IF(CHAR_LENGTH(`Supporters`.`LastName`) || CHAR_LENGTH(`Supporters`.`MailingName`), CONCAT_WS(\'\', `Supporters`.`LastName`, \', \', `Supporters`.`MailingName`), \'\')',
+				'parent_caption' => '`Supporters`.`MailingNameFull`',
 				'parent_from' => '`Supporters` ',
 				'filterers' => [],
 				'custom_query' => '',
@@ -96,6 +96,8 @@
 				'list_type' => 0,
 				'not_null' => false,
 			],
+		],
+		'Settings' => [
 		],
 	];
 

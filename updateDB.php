@@ -104,6 +104,15 @@
 		);
 		setupIndexes('MatchingFunds', ['SupporterID','DonationID',]);
 
+		setupTable(
+			'Settings', " 
+			CREATE TABLE IF NOT EXISTS `Settings` ( 
+				`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				PRIMARY KEY (`ID`),
+				`invoiceYear` CHAR(4) NULL
+			) CHARSET utf8"
+		);
+
 
 
 		// save MD5

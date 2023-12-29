@@ -41,6 +41,10 @@
 
 			return $data;
 		},
+		'Settings' => function($data, $options = []) {
+
+			return $data;
+		},
 	];
 
 	// accept a record as an assoc array, return a boolean indicating whether to import or skip record
@@ -50,6 +54,7 @@
 		'Donations' => function($data, $options = []) { return true; },
 		'Notes' => function($data, $options = []) { return true; },
 		'MatchingFunds' => function($data, $options = []) { return true; },
+		'Settings' => function($data, $options = []) { return true; },
 	];
 
 	/*

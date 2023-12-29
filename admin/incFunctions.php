@@ -99,7 +99,8 @@
 		/* table groups */
 		$tg = [
 			'Supporters',
-			'Donations'
+			'Donations',
+			'Backend'
 		];
 
 		$all_tables = [
@@ -139,6 +140,13 @@
 					'group' => $tg[1],
 					'homepageShowCount' => 0
 				],
+				'Settings' => [
+					'Caption' => 'Settings',
+					'Description' => '',
+					'tableIcon' => 'table.gif',
+					'group' => $tg[2],
+					'homepageShowCount' => 0
+				],
 		];
 
 		if($skip_authentication || getLoggedAdmin()) return $all_tables;
@@ -160,6 +168,7 @@
 			'Donations' => ['Donations', 'A listing of all your donations.', 'resources/table_icons/32Px - 385.png', 'Donations'],
 			'Notes' => ['Notes', 'A place to log different notes about your supporters.', 'resources/table_icons/32Px - 125.png', 'Supporters'],
 			'MatchingFunds' => ['Matching Funds', 'Track your matching funds.', 'resources/table_icons/32Px - 396.png', 'Donations'],
+			'Settings' => ['Settings', '', 'table.gif', 'Backend'],
 		];
 		if($skip_authentication || getLoggedAdmin()) return $arrTables;
 
@@ -1375,6 +1384,22 @@
 						],
 					],
 				],
+				'Settings' => [
+					'ID' => [
+						'appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'ID',
+							'description' => '',
+						],
+					],
+					'invoiceYear' => [
+						'appgini' => "CHAR(4) NULL",
+						'info' => [
+							'caption' => 'Invoice Year',
+							'description' => '',
+						],
+					],
+				],
 			];
 		}
 
@@ -2576,8 +2601,8 @@
 					    Supporters
 					WHERE 
 					`Supporters`.`ID`=\'%ID%\';',
-				'MailingNameFull' => 'SELECT 
-					    CONCAT_WS(" ", MailingName,LastName)
+				'MailingNameFull' => 'SELECT IF(supporters.Business IS NULL, 
+					    CONCAT_WS(" ", MailingName,LastName), supporters.Business)
 					FROM
 					    Supporters
 					WHERE 
@@ -2591,6 +2616,7 @@
 			],
 			'Notes' => [],
 			'MatchingFunds' => [],
+			'Settings' => [],
 		];
 	}
 	#########################################################
@@ -2725,7 +2751,7 @@
 			'Campaigns' => [
 			],
 			'Donations' => [
-				'SupporterID' => 'SELECT `Supporters`.`ID`, IF(CHAR_LENGTH(`Supporters`.`LastName`) || CHAR_LENGTH(`Supporters`.`MailingName`), CONCAT_WS(\'\', `Supporters`.`LastName`, \', \', `Supporters`.`MailingName`), \'\') FROM `Supporters` ORDER BY 2',
+				'SupporterID' => 'SELECT `Supporters`.`ID`, `Supporters`.`MailingNameFull` FROM `Supporters` ORDER BY 2',
 				'CampaignID' => 'SELECT `Campaigns`.`ID`, `Campaigns`.`CampaignName` FROM `Campaigns` ORDER BY 2',
 			],
 			'Notes' => [
@@ -2734,6 +2760,8 @@
 			'MatchingFunds' => [
 				'SupporterID' => 'SELECT `Supporters`.`ID`, IF(CHAR_LENGTH(`Supporters`.`LastName`) || CHAR_LENGTH(`Supporters`.`MailingName`), CONCAT_WS(\'\', `Supporters`.`LastName`, \', \', `Supporters`.`MailingName`), \'\') FROM `Supporters` ORDER BY 2',
 				'DonationID' => 'SELECT `Donations`.`ID`, IF(CHAR_LENGTH(`Donations`.`ID`) || CHAR_LENGTH(`Donations`.`Amount`), CONCAT_WS(\'\', `Donations`.`ID`, \' - \', `Donations`.`Amount`), \'\') FROM `Donations` LEFT JOIN `Supporters` as Supporters1 ON `Supporters1`.`ID`=`Donations`.`SupporterID` LEFT JOIN `Campaigns` as Campaigns1 ON `Campaigns1`.`ID`=`Donations`.`CampaignID` ORDER BY 2',
+			],
+			'Settings' => [
 			],
 		];
 

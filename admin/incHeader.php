@@ -302,17 +302,3 @@
 	});
 	</script>
 	<!-- Inserted by AdminLTE Plugin For Appgini AIH1 -->
-<!-- INSERTED BY ADMINLTE FOR APGINI PLUGIN -->
-	<style>
-	.navbar  {
-	  opacity: 0.9;
-	  border-radius:8px;
-  	}
-	.navbar-brand .text-info{
-		color: white !important;
-	}
-	.navbar-right{
-		display: none;
-	}
-	</style>
-	<!-- INSERTED BY ADMINLTE FOR APGINI PLUGIN -->

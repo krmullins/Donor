@@ -78,7 +78,7 @@
 			/* hide current table in homepage? */
 			$tChkHL = array_search($tn, []);
 			/* allow homepage 'add new' for current table? */
-			$tChkAHAN = array_search($tn, ['Supporters','Campaigns','Donations','Notes','MatchingFunds']);
+			$tChkAHAN = array_search($tn, ['Supporters','Campaigns','Donations','Notes','MatchingFunds','Settings']);
 
 			/* homepageShowCount for current table? */
 			$count_badge = '';

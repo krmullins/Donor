@@ -101,6 +101,24 @@ MatchingFunds_delete1Tip=["",spacer+"This option allows each member of the group
 MatchingFunds_delete2Tip=["",spacer+"This option allows each member of the group to delete any record owned by any member of the group in the 'Matching Funds' table."];
 MatchingFunds_delete3Tip=["",spacer+"This option allows each member of the group to delete any records in the 'Matching Funds' table."];
 
+// Settings table
+Settings_addTip=["",spacer+"This option allows all members of the group to add records to the 'Settings' table. A member who adds a record to the table becomes the 'owner' of that record."];
+
+Settings_view0Tip=["",spacer+"This option prohibits all members of the group from viewing any record in the 'Settings' table."];
+Settings_view1Tip=["",spacer+"This option allows each member of the group to view only his own records in the 'Settings' table."];
+Settings_view2Tip=["",spacer+"This option allows each member of the group to view any record owned by any member of the group in the 'Settings' table."];
+Settings_view3Tip=["",spacer+"This option allows each member of the group to view all records in the 'Settings' table."];
+
+Settings_edit0Tip=["",spacer+"This option prohibits all members of the group from modifying any record in the 'Settings' table."];
+Settings_edit1Tip=["",spacer+"This option allows each member of the group to edit only his own records in the 'Settings' table."];
+Settings_edit2Tip=["",spacer+"This option allows each member of the group to edit any record owned by any member of the group in the 'Settings' table."];
+Settings_edit3Tip=["",spacer+"This option allows each member of the group to edit any records in the 'Settings' table, regardless of their owner."];
+
+Settings_delete0Tip=["",spacer+"This option prohibits all members of the group from deleting any record in the 'Settings' table."];
+Settings_delete1Tip=["",spacer+"This option allows each member of the group to delete only his own records in the 'Settings' table."];
+Settings_delete2Tip=["",spacer+"This option allows each member of the group to delete any record owned by any member of the group in the 'Settings' table."];
+Settings_delete3Tip=["",spacer+"This option allows each member of the group to delete any records in the 'Settings' table."];
+
 /*
 	Style syntax:
 	-------------
